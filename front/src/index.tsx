@@ -1,11 +1,15 @@
 import { FunctionComponent, h } from "preact"
-import "./style"
+import Router, { Route } from "preact-router"
+
+import Home from "./pages/Home"
+import Post from "./pages/Post"
 
 const App: FunctionComponent = () => {
   return (
-    <div>
-      <h1>Hello, World!</h1>
-    </div>
+    <Router>
+      <Route path="/" component={Home} />
+      <Route path="/post/:id" component={Post} />
+    </Router>
   )
 }
 
