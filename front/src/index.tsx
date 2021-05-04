@@ -1,12 +1,12 @@
-import { h } from "preact"
-import './style';
+import { FunctionComponent, h } from "preact"
+import "./style";
 
-const App = () => {
+const App: FunctionComponent = () => {
   return (
     <div>
       <h1>Hello, World!</h1>
     </div>
-  );
+  )
 }
 
 export default App
