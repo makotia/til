@@ -1,5 +1,5 @@
 import { FunctionComponent, h } from "preact"
-import "./style";
+import "./style"
 
 const App: FunctionComponent = () => {
   return (
