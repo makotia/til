@@ -27,6 +27,7 @@ const Spacer: FunctionComponent<Props> = ({ width = 0, height = 0, spOnly, pcOnl
   })
 
   const style = css({
+    display: "block",
     width: `${width}px`,
     height: `${height}px`,
   })
