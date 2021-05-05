@@ -9,10 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: yarn && yarn build
+        working-directory: ./front
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TIL_MAKOTIA }}'
           projectId: til-makotia
+          working-directory: ./front
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
