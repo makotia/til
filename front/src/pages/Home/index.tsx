@@ -10,6 +10,7 @@ const Index: FunctionComponent = () => {
     <div>
       <Spacer height={8} />
       <h1>Today I Learned</h1>
+      <p>学んだことを書くよ</p>
       <Spacer height={16} />
       {data.length === 0 && <p>なにもないよ</p>}
       {data.map(p => (
