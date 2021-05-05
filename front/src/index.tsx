@@ -1,6 +1,7 @@
 import { FunctionComponent, h } from "preact"
 
 import Router, { Route } from "preact-router"
+import "modern-css-reset"
 
 import Home from "./pages/Home"
 import Post from "./pages/Post"
