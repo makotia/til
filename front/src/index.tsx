@@ -1,24 +1,14 @@
-import { FunctionComponent, h } from "preact"
+import { Fragment, FunctionComponent, h } from "preact"
 
-import Router, { Route } from "preact-router"
 import "modern-css-reset"
 
-import Home from "./pages/Home"
-import Post from "./pages/Post"
+import Routes from "./router"
 
 const App: FunctionComponent = () => {
   return (
-    <div
-      style={{
-        font: "14px/1.21 'Helvetica Neue', arial, sans-serif",
-        fontWeight: 400,
-      }}
-    >
-      <Router>
-        <Route path="/" component={Home} />
-        <Route path="/post/:id" component={Post} />
-      </Router>
-    </div>
+    <Fragment>
+      <Routes />
+    </Fragment>
   )
 }
 
