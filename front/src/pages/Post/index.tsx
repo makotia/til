@@ -6,12 +6,7 @@ type Props = {
 
 const Index: FunctionComponent<Props> = ({ id }: Props) => {
   return (
-    <div
-      style={{
-        font: "14px/1.21 'Helvetica Neue', arial, sans-serif",
-        fontWeight: 400,
-      }}
-    >
+    <div>
       <h1>Post Page</h1>
       <p>{id}</p>
     </div>

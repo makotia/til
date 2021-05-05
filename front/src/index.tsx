@@ -7,10 +7,17 @@ import Post from "./pages/Post"
 
 const App: FunctionComponent = () => {
   return (
-    <Router>
-      <Route path="/" component={Home} />
-      <Route path="/post/:id" component={Post} />
-    </Router>
+    <div
+      style={{
+        font: "14px/1.21 'Helvetica Neue', arial, sans-serif",
+        fontWeight: 400,
+      }}
+    >
+      <Router>
+        <Route path="/" component={Home} />
+        <Route path="/post/:id" component={Post} />
+      </Router>
+    </div>
   )
 }
 
