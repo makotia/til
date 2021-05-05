@@ -11,6 +11,7 @@ const rootStyle = css({
   width: "1000px",
   margin: "0 auto",
   padding: "0 .5rem",
+  textAlign: "center",
 })
 
 const mainStyle = css({
