@@ -1,12 +1,12 @@
 import { h, FunctionComponent, ComponentChildren } from "preact"
 
-import { css } from "goober"
+import { style } from "typestyle"
 
 type Props = {
   children: ComponentChildren
 }
 
-const rootStyle = css({
+const rootStyle = style({
   maxWidth: "100vw",
   width: "1000px",
   margin: "0 auto",
@@ -14,19 +14,21 @@ const rootStyle = css({
   textAlign: "center",
 })
 
-const mainStyle = css({
-  minHeight: "calc(100vh - 40px)"
+const mainStyle = style({
+  minHeight: "calc(100vh - 40px)",
 })
 
-const footerStyle = css({
+const footerStyle = style({
   textAlign: "center",
   height: "40px",
   display: "flex",
   justifyContent: "center",
-  "*": {
-    color: "black",
-    textDecoration: "none",
-    margin: "auto 0",
+  $nest: {
+    "*": {
+      color: "black",
+      textDecoration: "none",
+      margin: "auto 0",
+    }
   }
 })
 

@@ -1,7 +1,7 @@
 import { h, FunctionalComponent, Fragment } from "preact"
 
-import { css } from "goober"
 import { route } from "preact-router"
+import { style } from "typestyle"
 
 import { Post } from "../../types"
 import Spacer from "../Spacer"
@@ -10,32 +10,34 @@ type Props = {
   post: Post,
 }
 
-const rootStyle = css({
+const rootStyle = style({
   width: "100%",
   textAlign: "left",
   border: "1px solid black",
   borderRadius: "10px",
   padding: ".5rem",
-  "&:hover": {
-    cursor: "pointer",
-  },
+  $nest: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  }
 })
 
-const titleStyle = css({
+const titleStyle = style({
   fontSize: "20px",
 })
 
-const tagsStyle = css({
+const tagsStyle = style({
   display: "flex",
   flexDirection: "row",
 })
 
-const tagStyle = css({
+const tagStyle = style({
   fontSize: "14px",
   margin: "auto 0"
 })
 
-const dateStyle = css({
+const dateStyle = style({
   color: "gray",
 })
 
