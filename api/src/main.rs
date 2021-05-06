@@ -1,17 +1,31 @@
-use actix_web::{get, middleware, web, App, Error, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware, post, web, App, Error, HttpResponse, HttpServer};
+use api::{crud, models::NewPost};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use r2d2::Pool;
 
 #[get("/posts")]
 async fn index(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    Ok(HttpResponse::Ok().json({}))
+    let posts = web::block(move || crud::index_post(conn))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    Ok(HttpResponse::Ok().json(posts))
 }
 
-#[get("/")]
-async fn aa(pool: web::Data<DbPool>) -> impl Responder {
+#[post("/posts")]
+async fn aa(pool: web::Data<DbPool>, post_data: web::Json<NewPost>) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    "aaa"
+    web::block(move || crud::add_post(conn, post_data.title.clone()))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+    Ok(HttpResponse::Ok().finish())
 }
 
 type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
