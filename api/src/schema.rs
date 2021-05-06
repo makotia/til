@@ -2,6 +2,6 @@ table! {
     posts (id) {
         id -> Integer,
         title -> Varchar,
-        created_at -> Datetime,
+        created_at -> Timestamp,
     }
 }
