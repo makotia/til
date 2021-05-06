@@ -1,5 +1,6 @@
 use actix_web::{get, middleware, web, App, HttpServer, Responder};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
+use r2d2::Pool;
 
 #[get("/{id}/{name}")]
 async fn index(
@@ -18,13 +19,14 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     dotenv::dotenv().ok();
 
-    let connspec = std::env::var("DATABASE_URL").expect("DATABASE_URL");
-    let manager = ConnectionManager::<MysqlConnection>::new(connspec);
-    let pool = r2d2::Pool::builder()
+    let connspec: String = std::env::var("DATABASE_URL").expect("DATABASE_URL");
+    let manager: ConnectionManager<MysqlConnection> =
+        ConnectionManager::<MysqlConnection>::new(connspec);
+    let pool: Pool<ConnectionManager<MysqlConnection>> = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool.");
 
-    let bind = "0.0.0.0:8080";
+    let bind: &str = "0.0.0.0:8080";
     println!("Starting server at: {}", bind);
 
     HttpServer::new(move || {
