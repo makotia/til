@@ -1,14 +1,17 @@
-use actix_web::{get, middleware, web, App, HttpServer, Responder};
+use actix_web::{get, middleware, web, App, Error, HttpResponse, HttpServer, Responder};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use r2d2::Pool;
 
-#[get("/{id}/{name}")]
-async fn index(
-    pool: web::Data<DbPool>,
-    web::Path((id, name)): web::Path<(u32, String)>,
-) -> impl Responder {
+#[get("/posts")]
+async fn index(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    format!("Hello {}! id:{}", name, id)
+    Ok(HttpResponse::Ok().json({}))
+}
+
+#[get("/")]
+async fn aa(pool: web::Data<DbPool>) -> impl Responder {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    "aaa"
 }
 
 type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
@@ -34,6 +37,7 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             .wrap(middleware::Logger::default())
             .service(index)
+            .service(aa)
     })
     .bind(bind)?
     .run()
