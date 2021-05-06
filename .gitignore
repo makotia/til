@@ -2,3 +2,4 @@ node_modules
 *.log
 front/build
 api/target
+.env
