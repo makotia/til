@@ -1,2 +1,2 @@
 -- This file should undo anything in `up.sql`
-delete table tags
+DROP TABLE tags
