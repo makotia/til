@@ -2,7 +2,10 @@ use actix_web::{
     delete, error::BlockingError, get, middleware, post, put, web, App, Error, HttpResponse,
     HttpServer,
 };
-use api::{crud, models::NewPost};
+use api::{
+    crud,
+    models::{NewContent, NewPost},
+};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use r2d2::Pool;
 
@@ -55,6 +58,23 @@ async fn update_post(
     Ok(HttpResponse::Ok().finish())
 }
 
+#[put("/posts/{id}/contents/{content_id}")]
+async fn update_content(
+    pool: web::Data<DbPool>,
+    web::Path((_, content_id)): web::Path<(i32, i32)>,
+    post_data: web::Json<NewContent>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    web::block(move || crud::update_content(conn, content_id, post_data.content.clone()))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    Ok(HttpResponse::Ok().finish())
+}
+
 #[post("/posts")]
 async fn create_post(
     pool: web::Data<DbPool>,
@@ -70,6 +90,22 @@ async fn create_post(
     Ok(HttpResponse::Ok().finish())
 }
 
+#[post("/posts/{id}/contents")]
+async fn create_content(
+    pool: web::Data<DbPool>,
+    web::Path(id): web::Path<i32>,
+    post_data: web::Json<NewContent>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    web::block(move || crud::add_content(conn, post_data.content.clone(), id))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+    Ok(HttpResponse::Ok().finish())
+}
+
 #[delete("/posts/{id}")]
 async fn delete_post(
     pool: web::Data<DbPool>,
@@ -77,6 +113,22 @@ async fn delete_post(
 ) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
     web::block(move || crud::delete_post(conn, id))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    Ok(HttpResponse::Ok().finish())
+}
+
+#[delete("/posts/{id}/contents/{content_id}")]
+async fn delete_content(
+    pool: web::Data<DbPool>,
+    web::Path((_, content_id)): web::Path<(i32, i32)>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    web::block(move || crud::delete_content(conn, content_id))
         .await
         .map_err(|e| {
             eprint!("{}", e);
@@ -113,6 +165,9 @@ async fn main() -> std::io::Result<()> {
             .service(update_post)
             .service(create_post)
             .service(delete_post)
+            .service(create_content)
+            .service(update_content)
+            .service(delete_content)
     })
     .bind(bind)?
     .run()
