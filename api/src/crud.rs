@@ -33,6 +33,17 @@ pub fn index_post(
     posts.load::<Post>(&conn)
 }
 
+pub fn update_post(
+    conn: PooledConnection<ConnectionManager<MysqlConnection>>,
+    post_id: i32,
+    post_title: String,
+) -> QueryResult<usize> {
+    use crate::schema::posts::dsl::*;
+    diesel::update(posts.filter(id.eq(post_id)))
+        .set(title.eq(post_title))
+        .execute(&conn)
+}
+
 pub fn delete_post(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
     post_id: i32,
