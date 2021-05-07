@@ -1,14 +1,89 @@
-use actix_web::{get, middleware, web, App, HttpServer, Responder};
+use actix_web::{
+    delete, error::BlockingError, get, middleware, post, put, web, App, Error, HttpResponse,
+    HttpServer,
+};
+use api::{crud, models::NewPost};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use r2d2::Pool;
 
-#[get("/{id}/{name}")]
-async fn index(
-    pool: web::Data<DbPool>,
-    web::Path((id, name)): web::Path<(u32, String)>,
-) -> impl Responder {
+#[get("/posts")]
+async fn index_post(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    format!("Hello {}! id:{}", name, id)
+    let posts = web::block(move || crud::index_post(conn))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    Ok(HttpResponse::Ok().json(posts))
+}
+
+#[get("/posts/{id}")]
+async fn get_post(
+    pool: web::Data<DbPool>,
+    web::Path(id): web::Path<i32>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    let post = web::block(move || crud::get_post(conn, id))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            match e {
+                BlockingError::Error(diesel::NotFound) => HttpResponse::NotFound().finish(),
+                _ => HttpResponse::InternalServerError().finish(),
+            }
+        })?;
+
+    Ok(HttpResponse::Ok().json(post))
+}
+
+#[put("/posts/{id}")]
+async fn update_post(
+    pool: web::Data<DbPool>,
+    web::Path(id): web::Path<i32>,
+    post_data: web::Json<NewPost>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    web::block(move || crud::update_post(conn, id, post_data.title.clone()))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    Ok(HttpResponse::Ok().finish())
+}
+
+#[post("/posts")]
+async fn create_post(
+    pool: web::Data<DbPool>,
+    post_data: web::Json<NewPost>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    web::block(move || crud::add_post(conn, post_data.title.clone()))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+    Ok(HttpResponse::Ok().finish())
+}
+
+#[delete("/posts/{id}")]
+async fn delete_post(
+    pool: web::Data<DbPool>,
+    web::Path(id): web::Path<i32>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    web::block(move || crud::delete_post(conn, id))
+        .await
+        .map_err(|e| {
+            eprint!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+
+    Ok(HttpResponse::Ok().finish())
 }
 
 type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
@@ -33,7 +108,11 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(pool.clone())
             .wrap(middleware::Logger::default())
-            .service(index)
+            .service(index_post)
+            .service(get_post)
+            .service(update_post)
+            .service(create_post)
+            .service(delete_post)
     })
     .bind(bind)?
     .run()
