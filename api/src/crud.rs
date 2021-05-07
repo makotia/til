@@ -1,7 +1,7 @@
 use diesel::{prelude::*, r2d2::ConnectionManager, MysqlConnection, QueryResult};
 use r2d2::PooledConnection;
 
-use crate::models::{Content, NewPost, Post, PostWithContents};
+use crate::models::{Content, NewContent, NewPost, Post, PostWithContents};
 
 pub fn add_post(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
@@ -12,6 +12,23 @@ pub fn add_post(
     let data = NewPost { title: title };
 
     diesel::insert_into(posts::table)
+        .values(data)
+        .execute(&conn)
+}
+
+pub fn add_content(
+    conn: PooledConnection<ConnectionManager<MysqlConnection>>,
+    content_body: String,
+    post_id: i32,
+) -> QueryResult<usize> {
+    use crate::schema::contents;
+
+    let data = NewContent {
+        post_id: post_id,
+        content: content_body,
+    };
+
+    diesel::insert_into(contents::table)
         .values(data)
         .execute(&conn)
 }
@@ -61,6 +78,17 @@ pub fn update_post(
         .execute(&conn)
 }
 
+pub fn update_content(
+    conn: PooledConnection<ConnectionManager<MysqlConnection>>,
+    content_id: i32,
+    content_body: String,
+) -> QueryResult<usize> {
+    use crate::schema::contents::dsl::*;
+    diesel::update(contents.filter(id.eq(content_id)))
+        .set(content.eq(content_body))
+        .execute(&conn)
+}
+
 pub fn delete_post(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
     post_id: i32,
@@ -68,4 +96,13 @@ pub fn delete_post(
     use crate::schema::posts::dsl::*;
 
     diesel::delete(posts.filter(id.eq(post_id))).execute(&conn)
+}
+
+pub fn delete_content(
+    conn: PooledConnection<ConnectionManager<MysqlConnection>>,
+    content_id: i32,
+) -> QueryResult<usize> {
+    use crate::schema::contents::dsl::*;
+
+    diesel::delete(contents.filter(id.eq(content_id))).execute(&conn)
 }

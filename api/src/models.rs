@@ -1,4 +1,4 @@
-use super::schema::posts;
+use super::schema::{contents, posts};
 use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Debug, Deserialize, Serialize)]
@@ -28,4 +28,11 @@ pub struct Content {
     pub post_id: i32,
     pub content: String,
     pub created_at: chrono::NaiveDateTime,
+}
+
+#[derive(Insertable, Debug, Deserialize)]
+#[table_name = "contents"]
+pub struct NewContent {
+    pub post_id: i32,
+    pub content: String,
 }
