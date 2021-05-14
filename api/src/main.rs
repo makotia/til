@@ -1,6 +1,10 @@
+use actix_cors::Cors;
 use actix_web::{
-    delete, error::BlockingError, get, middleware, post, put, web, App, Error, HttpResponse,
-    HttpServer,
+    delete,
+    error::BlockingError,
+    get,
+    http::{header, Method},
+    middleware, post, put, web, App, Error, HttpResponse, HttpServer,
 };
 use api::{
     crud,
@@ -153,12 +157,27 @@ async fn main() -> std::io::Result<()> {
         .build(manager)
         .expect("Failed to create pool.");
 
-    let bind: &str = "0.0.0.0:8080";
+    let bind: &str = "0.0.0.0:8000";
     println!("Starting server at: {}", bind);
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allowed_origin_fn(|_, _req_head| true)
+            .allowed_methods(vec![
+                Method::GET,
+                Method::POST,
+                Method::PUT,
+                Method::DELETE,
+                Method::OPTIONS,
+            ])
+            .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+            .allowed_header(header::CONTENT_TYPE)
+            .supports_credentials()
+            .max_age(3600);
+
         App::new()
             .data(pool.clone())
+            .wrap(cors)
             .wrap(middleware::Logger::default())
             .service(index_post)
             .service(get_post)
