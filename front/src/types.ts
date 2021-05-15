@@ -1,20 +1,12 @@
-export type FullPost = {
+export type Content = {
   id: string,
-  title: string,
   content: string,
-  tags: Tag[],
-  created_at: Date,
+  created_at: string,
 }
 
 export type Post = {
   id: string,
   title: string,
-  tags: Tag[],
-  created_at: Date,
-}
-
-export type Tag = {
-  id: string,
-  name: string,
-  icon?: string,
+  created_at: string,
+  contents?: Content[],
 }

@@ -1,6 +1,9 @@
 import { h, FunctionComponent, ComponentChildren } from "preact"
 
+import { route } from "preact-router"
 import { style } from "typestyle"
+
+import Spacer from "../Spacer"
 
 type Props = {
   children: ComponentChildren
@@ -36,6 +39,8 @@ const Layout: FunctionComponent<Props> = ({ children }: Props) => {
   return (
     <div className={rootStyle}>
       <main className={mainStyle}>
+        <Spacer height={8} />
+        <h1 onClick={() => route("/")}>Today I Learned</h1>
         {children}
       </main>
       <footer className={footerStyle}>
