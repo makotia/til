@@ -15,9 +15,19 @@ table! {
     }
 }
 
+table! {
+    users (id) {
+        id -> Integer,
+        screen_name -> Text,
+        hashed_password -> Text,
+        created_at -> Timestamp,
+    }
+}
+
 joinable!(contents -> posts (post_id));
 
 allow_tables_to_appear_in_same_query!(
     contents,
     posts,
+    users,
 );
