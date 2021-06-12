@@ -6,9 +6,7 @@ use actix_web::{
     middleware, web, App, Error, HttpServer,
 };
 use actix_web_httpauth::{extractors::bearer::BearerAuth, middleware::HttpAuthentication};
-use api::{handler, jwt::decode_jwt};
-use diesel::{r2d2::ConnectionManager, MysqlConnection};
-use r2d2::Pool;
+use api::{db::establish_connection, handler, jwt::decode_jwt};
 
 async fn ok_validator(
     req: ServiceRequest,
@@ -26,12 +24,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     dotenv::dotenv().ok();
 
-    let connspec: String = std::env::var("DATABASE_URL").expect("DATABASE_URL");
-    let manager: ConnectionManager<MysqlConnection> =
-        ConnectionManager::<MysqlConnection>::new(connspec);
-    let pool: Pool<ConnectionManager<MysqlConnection>> = r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool.");
+    let pool = establish_connection();
 
     let bind: &str = "0.0.0.0:8000";
     println!("Starting server at: {}", bind);
