@@ -1,5 +1,8 @@
 use super::schema::{contents, posts};
+use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use serde::{Deserialize, Serialize};
+
+pub type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
 #[derive(Queryable, Debug, Deserialize, Serialize)]
 pub struct Post {
