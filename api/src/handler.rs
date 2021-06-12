@@ -1,8 +1,10 @@
 use actix_web::{error::BlockingError, web, Error, HttpResponse};
+use bcrypt::verify;
 
 use crate::{
     crud,
-    models::{DbPool, NewContent, NewPost},
+    jwt::make_jwt,
+    models::{AuthData, DbPool, LoginUser, NewContent, NewPost},
 };
 
 pub async fn index_post(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
@@ -72,7 +74,7 @@ pub async fn create_post(
     post_data: web::Json<NewPost>,
 ) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    web::block(move || crud::add_post(conn, post_data.title.clone()))
+    web::block(move || crud::add_post(conn, post_data.0))
         .await
         .map_err(|e| {
             eprintln!("{}", e);
@@ -87,7 +89,7 @@ pub async fn create_content(
     post_data: web::Json<NewContent>,
 ) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    web::block(move || crud::add_content(conn, post_data.content.clone(), id))
+    web::block(move || crud::add_content(conn, id, post_data.0))
         .await
         .map_err(|e| {
             eprintln!("{}", e);
@@ -124,4 +126,27 @@ pub async fn delete_content(
         })?;
 
     Ok(HttpResponse::Ok().finish())
+}
+
+pub async fn login_user(
+    pool: web::Data<DbPool>,
+    user_data: web::Json<LoginUser>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    let screen_name = user_data.clone().screen_name;
+    let password = user_data.clone().password;
+    let user = web::block(move || crud::get_user(conn, screen_name))
+        .await
+        .map_err(|_| HttpResponse::Unauthorized().finish())?;
+
+    match verify(password, &user.hashed_password) {
+        Ok(_) => {
+            let token = make_jwt(&user.screen_name);
+
+            let return_data = AuthData { token };
+
+            Ok(HttpResponse::Ok().json(return_data))
+        }
+        Err(_) => Ok(HttpResponse::Unauthorized().finish()),
+    }
 }
