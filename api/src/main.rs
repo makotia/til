@@ -1,11 +1,24 @@
 use actix_cors::Cors;
 use actix_web::{
+    dev::ServiceRequest,
+    error::ErrorUnauthorized,
     http::{header, Method},
-    middleware, web, App, HttpServer,
+    middleware, web, App, Error, HttpServer,
 };
-use api::handler;
+use actix_web_httpauth::{extractors::bearer::BearerAuth, middleware::HttpAuthentication};
+use api::{handler, jwt::decode_jwt};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use r2d2::Pool;
+
+async fn ok_validator(
+    req: ServiceRequest,
+    credentials: BearerAuth,
+) -> Result<ServiceRequest, Error> {
+    match decode_jwt(credentials.token()) {
+        Ok(_) => Ok(req),
+        Err(err) => Err(ErrorUnauthorized(err)),
+    }
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -42,22 +55,27 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             .wrap(cors)
             .wrap(middleware::Logger::default())
+            .route("/login", web::post().to(handler::login_user))
             .route("/posts", web::get().to(handler::index_post))
             .route("/posts/{id}", web::get().to(handler::get_post))
-            .route("/posts/{id}", web::put().to(handler::update_post))
-            .route(
-                "/posts/{id}/contents/{content_id}",
-                web::put().to(handler::update_content),
-            )
-            .route("/posts", web::post().to(handler::create_post))
-            .route(
-                "/posts/{id}/contents",
-                web::post().to(handler::create_content),
-            )
-            .route("/posts/{id}", web::delete().to(handler::delete_post))
-            .route(
-                "/posts/{id}/contents/{content_id}",
-                web::delete().to(handler::delete_content),
+            .service(
+                web::scope("/")
+                    .wrap(HttpAuthentication::bearer(ok_validator))
+                    .route("/posts/{id}", web::put().to(handler::update_post))
+                    .route(
+                        "/posts/{id}/contents/{content_id}",
+                        web::put().to(handler::update_content),
+                    )
+                    .route("/posts", web::post().to(handler::create_post))
+                    .route(
+                        "/posts/{id}/contents",
+                        web::post().to(handler::create_content),
+                    )
+                    .route("/posts/{id}", web::delete().to(handler::delete_post))
+                    .route(
+                        "/posts/{id}/contents/{content_id}",
+                        web::delete().to(handler::delete_content),
+                    ),
             )
     })
     .bind(bind)?

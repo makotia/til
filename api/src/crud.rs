@@ -1,15 +1,14 @@
+use bcrypt::{hash, DEFAULT_COST};
 use diesel::{prelude::*, r2d2::ConnectionManager, MysqlConnection, QueryResult};
 use r2d2::PooledConnection;
 
-use crate::models::{Content, NewContent, NewPost, Post, PostWithContents};
+use crate::models::{Content, NewContent, NewPost, NewUser, Post, PostWithContents, User};
 
 pub fn add_post(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
-    title: String,
+    data: NewPost,
 ) -> QueryResult<usize> {
     use crate::schema::posts;
-
-    let data = NewPost { title: title };
 
     diesel::insert_into(posts::table)
         .values(data)
@@ -18,15 +17,12 @@ pub fn add_post(
 
 pub fn add_content(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
-    content_body: String,
     post_id: i32,
+    mut data: NewContent,
 ) -> QueryResult<usize> {
     use crate::schema::contents;
 
-    let data = NewContent {
-        post_id: post_id,
-        content: content_body,
-    };
+    data.post_id = post_id;
 
     diesel::insert_into(contents::table)
         .values(data)
@@ -105,4 +101,36 @@ pub fn delete_content(
     use crate::schema::contents::dsl::*;
 
     diesel::delete(contents.filter(id.eq(content_id))).execute(&conn)
+}
+
+pub fn add_user(
+    conn: PooledConnection<ConnectionManager<MysqlConnection>>,
+    screen_name: String,
+    password: String,
+) -> QueryResult<usize> {
+    use crate::schema::users;
+
+    let hashed_password = hash(password, DEFAULT_COST).unwrap();
+
+    let data = NewUser {
+        screen_name,
+        hashed_password,
+    };
+
+    diesel::insert_into(users::table)
+        .values(data)
+        .execute(&conn)
+}
+
+pub fn get_user(
+    conn: PooledConnection<ConnectionManager<MysqlConnection>>,
+    screen_name: String,
+) -> QueryResult<User> {
+    use crate::schema::users;
+
+    let user = users::table
+        .filter(users::screen_name.eq(screen_name))
+        .first::<User>(&conn)
+        .expect("err");
+    Ok(user)
 }
