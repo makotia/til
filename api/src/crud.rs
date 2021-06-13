@@ -69,9 +69,10 @@ pub fn get_post(
 pub fn index_post(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
 ) -> QueryResult<Vec<Post>> {
+    use crate::schema::posts;
     use crate::schema::posts::dsl::*;
 
-    posts.load::<Post>(&conn)
+    posts.order(posts::id.desc()).load::<Post>(&conn)
 }
 
 pub fn update_post(
