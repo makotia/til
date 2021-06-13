@@ -5,13 +5,12 @@ import { useEffect, useState } from "preact/hooks"
 import { style } from "typestyle"
 
 import Alert from "../../components/Alert"
-import ContentCard from "../../components/ContentCard"
+import ContentCard, { AddContent } from "../../components/ContentCard"
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
 import { formatRelative, strToDayjs } from "../../lib/date"
+import { getToken } from "../../lib/token"
 import { Post } from "../../types"
-
-
 
 type Props = {
   id: string;
@@ -23,9 +22,10 @@ const postStyle = style({
 
 const Index: FunctionComponent<Props> = ({ id }: Props) => {
   const [post, setPost] = useState<Post | undefined>(undefined)
+  const token = getToken()
+  const fetchData: (id: string) => void = async (id): Promise<void> => await axios.get<Post>(`${BASE_URL}/posts/${id}`).then(res => setPost(res.data))
   useEffect(() => {
-    const f = async (): Promise<void> => await axios.get<Post>(`${BASE_URL}/posts/${id}`).then(res => setPost(res.data))
-    f()
+    fetchData(id)
   }, [id])
   return (
     <div className={postStyle}>
@@ -43,6 +43,7 @@ const Index: FunctionComponent<Props> = ({ id }: Props) => {
                   <Spacer height={8} />
                 </Fragment>
               ))}
+              {token && <AddContent postId={id} refetchFunc={fetchData} />}
             </Fragment>
           )}
         </div>

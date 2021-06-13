@@ -32,12 +32,24 @@ const dateStyle = style({
   color: "gray",
 })
 
+const centerStyle = style({
+  textAlign: "center",
+})
+
 const PostCard: FunctionalComponent<Props> = ({ post }: Props) => {
   return (
     <div className={rootStyle} onClick={() => route(`/post/${post.id}`)}>
       <p className={titleStyle}>{post.title}</p>
       <Spacer height={4} />
       <p className={dateStyle}>{formatJA(strToDayjs(post.created_at))}</p>
+    </div>
+  )
+}
+
+export const PostCreateCard: FunctionalComponent = () => {
+  return (
+    <div className={rootStyle} onClick={() => route("/post/new")}>
+      <p className={[titleStyle, centerStyle].join(" ")}>＋新規作成</p>
     </div>
   )
 }

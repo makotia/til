@@ -3,13 +3,15 @@ import { Fragment, FunctionComponent, h } from "preact"
 import axios from "axios"
 import { useEffect, useState } from "preact/hooks"
 
-import PostCard from "../../components/PostCard"
+import PostCard, { PostCreateCard } from "../../components/PostCard"
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
+import { getToken } from "../../lib/token"
 import { Post } from "../../types"
 
 const Index: FunctionComponent = () => {
   const [posts, setPosts] = useState<Post[]>([])
+  const token = getToken()
   useEffect(() => {
     const f = async (): Promise<void> =>
       await axios
@@ -21,7 +23,13 @@ const Index: FunctionComponent = () => {
     <div>
       <p>学んだことを書くよ</p>
       <Spacer height={16} />
-      {posts.length === 0 && <p>なにもないよ</p>}
+      {posts.length === 0 && !token && <p>なにもないよ</p>}
+      {token &&
+        <Fragment key={0}>
+          <PostCreateCard />
+          <Spacer height={8} />
+        </Fragment>
+      }
       {posts.map((p) => {
         if (p === undefined) return
         return (
