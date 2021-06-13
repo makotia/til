@@ -11,8 +11,6 @@ import { BASE_URL } from "../../consts"
 import { formatRelative, strToDayjs } from "../../lib/date"
 import { Post } from "../../types"
 
-
-
 type Props = {
   id: string;
 }
