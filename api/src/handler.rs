@@ -74,13 +74,13 @@ pub async fn create_post(
     post_data: web::Json<NewPost>,
 ) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    web::block(move || crud::add_post(conn, post_data.0))
+    let post = web::block(move || crud::add_post(conn, post_data.0))
         .await
         .map_err(|e| {
             eprintln!("{}", e);
             HttpResponse::InternalServerError().finish()
         })?;
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok().json(post))
 }
 
 pub async fn create_content(

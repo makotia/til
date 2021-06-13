@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 pub type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
-#[derive(Queryable, Debug, Deserialize, Serialize)]
+#[derive(Queryable, Debug, Deserialize, Serialize, Identifiable)]
 pub struct Post {
     pub id: i32,
     pub title: String,

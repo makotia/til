@@ -7,12 +7,23 @@ use crate::models::{Content, NewContent, NewPost, NewUser, Post, PostWithContent
 pub fn add_post(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
     data: NewPost,
-) -> QueryResult<usize> {
+) -> QueryResult<Post> {
     use crate::schema::posts;
+    use crate::schema::posts::dsl::*;
 
-    diesel::insert_into(posts::table)
-        .values(data)
-        .execute(&conn)
+    conn.transaction::<_, diesel::result::Error, _>(|| {
+        let inserted_user = conn
+            .transaction::<_, diesel::result::Error, _>(|| {
+                diesel::insert_into(posts::table)
+                    .values(data)
+                    .execute(&conn)?;
+
+                posts.order(posts::id.desc()).first::<Post>(&conn)
+            })
+            .expect("err");
+
+        Ok(inserted_user)
+    })
 }
 
 pub fn add_content(
