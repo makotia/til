@@ -15,6 +15,13 @@ const rootStyle = style({
   padding: "10px",
   borderRadius: "10px",
   border: "1px solid black",
+  $nest: {
+    blockquote: {
+      borderLeft: "3px solid #ccc",
+      paddingLeft: "5px",
+      marginLeft: ".5rem"
+    },
+  }
 })
 
 const dateStyle = style({
