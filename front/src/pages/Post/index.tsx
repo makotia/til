@@ -1,8 +1,10 @@
 import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import Helmet from "preact-helmet"
 import { useEffect, useState } from "preact/hooks"
 import { style } from "typestyle"
+
 
 import Alert from "../../components/Alert"
 import ContentCard, { AddContent } from "../../components/ContentCard"
@@ -31,6 +33,7 @@ const Index: FunctionComponent<Props> = ({ id }: Props) => {
     <div className={postStyle}>
       {post && (
         <div>
+          <Helmet title={`${post.title} | TIL`} />
           <h2>{post.title}</h2>
           <Spacer height={8} />
           <Alert text={`この記事は${formatRelative(strToDayjs(post.created_at))}に投稿されたため、最新の情報ではありません。`} />
