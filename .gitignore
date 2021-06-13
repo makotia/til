@@ -1,5 +1,6 @@
 node_modules
 *.log
 front/build
+front/size-plugin.json
 target
 .env
