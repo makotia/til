@@ -29,11 +29,11 @@ pub fn add_post(
 pub fn add_content(
     conn: PooledConnection<ConnectionManager<MysqlConnection>>,
     post_id: i32,
-    mut data: NewContent,
+    content: String,
 ) -> QueryResult<usize> {
     use crate::schema::contents;
 
-    data.post_id = post_id;
+    let data = NewContent { post_id, content };
 
     diesel::insert_into(contents::table)
         .values(data)

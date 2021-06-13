@@ -48,6 +48,11 @@ pub struct NewContent {
     pub content: String,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+pub struct NewContentRequest {
+    pub content: String,
+}
+
 #[derive(Insertable, Debug, Deserialize)]
 #[table_name = "users"]
 pub struct NewUser {

@@ -4,7 +4,7 @@ use bcrypt::verify;
 use crate::{
     crud,
     jwt::make_jwt,
-    models::{AuthData, DbPool, LoginUser, NewContent, NewPost},
+    models::{AuthData, DbPool, LoginUser, NewContent, NewContentRequest, NewPost},
 };
 
 pub async fn index_post(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
@@ -86,10 +86,10 @@ pub async fn create_post(
 pub async fn create_content(
     pool: web::Data<DbPool>,
     web::Path(id): web::Path<i32>,
-    post_data: web::Json<NewContent>,
+    post_data: web::Json<NewContentRequest>,
 ) -> Result<HttpResponse, Error> {
     let conn = pool.get().expect("couldn't get db connection from pool");
-    web::block(move || crud::add_content(conn, id, post_data.0))
+    web::block(move || crud::add_content(conn, id, post_data.clone().content))
         .await
         .map_err(|e| {
             eprintln!("{}", e);
