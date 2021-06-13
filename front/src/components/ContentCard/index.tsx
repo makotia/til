@@ -2,6 +2,8 @@ import { h, FunctionComponent } from "preact"
 
 import axios from "axios"
 import { useState } from "preact/hooks"
+import ReactHtmlParser from "react-html-parser"
+import snarkdown from "snarkdown"
 import { style } from "typestyle"
 
 import { BASE_URL } from "../../consts"
@@ -13,6 +15,13 @@ const rootStyle = style({
   padding: "10px",
   borderRadius: "10px",
   border: "1px solid black",
+  $nest: {
+    blockquote: {
+      borderLeft: "3px solid #ccc",
+      paddingLeft: "5px",
+      marginLeft: ".5rem"
+    },
+  }
 })
 
 const dateStyle = style({
@@ -30,7 +39,7 @@ const ContentCard: FunctionComponent<Content> = ({ content, created_at }: Conten
   return (
     <div className={rootStyle}>
       <p className={dateStyle}>{formatJA(strToDayjs(created_at))}</p>
-      <p>{content}</p>
+      {ReactHtmlParser(snarkdown(content))}
     </div>
   )
 }
