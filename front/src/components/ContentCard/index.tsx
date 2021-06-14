@@ -29,6 +29,25 @@ const dateStyle = style({
   fontSize: "12px",
 })
 
+const textAreaStyle = style({
+  width: "100%",
+  minHeight: "5rem",
+  height: "unset",
+  resize: "none",
+  border: "none",
+  backgroundColor: "transparent",
+  outline: "none",
+})
+
+const submitButtonStyle = style({
+  marginLeft: "auto",
+  display: "block",
+  backgroundColor: "transparent",
+  boxShadow: "none",
+  border: "1px solid black",
+  borderRadius: "5px",
+})
+
 type AddContentProps = {
   postId: string;
   contentId?: string;
@@ -64,8 +83,13 @@ export const AddContent: FunctionComponent<AddContentProps> = (props) => {
   }
   return (
     <div className={rootStyle}>
-      <textarea value={content} onInput={e => setContent(e.currentTarget.value)} />
-      <button onClick={submit}>投稿</button>
+      <textarea
+        className={textAreaStyle}
+        rows={content.split("\n").length}
+        value={content}
+        onInput={e => setContent(e.currentTarget.value)}
+      />
+      <button className={submitButtonStyle} onClick={submit}>投稿</button>
     </div>
   )
 }
