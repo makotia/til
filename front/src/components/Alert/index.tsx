@@ -1,24 +1,22 @@
-import {FunctionComponent, h} from "preact"
+import { FunctionComponent, h } from "preact"
 
-import { style } from "typestyle"
+import { styled, setup } from "goober"
 
 type Props = {
   text: string
 }
 
-const rootStyle = style({
-  backgroundColor: "#ff96f6",
+setup(h)
+
+const Root = styled("p")({
+  border: "2px solid #ff96f6",
   borderRadius: "10px",
   padding: "10px",
   width: "100%",
 })
 
-const Alert: FunctionComponent<Props> = ({ text }: Props) => {
-  return (
-    <div className={rootStyle}>
-      <p>{text}</p>
-    </div>
-  )
-}
+const Alert: FunctionComponent<Props> = ({ text }: Props) => (
+  <Root>{text}</Root>
+)
 
 export default Alert

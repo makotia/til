@@ -1,6 +1,8 @@
 import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import { styled, setup } from "goober"
+import Helmet from "preact-helmet"
 import { route } from "preact-router"
 import { useState } from "preact/hooks"
 
@@ -8,6 +10,25 @@ import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
 import { getToken } from "../../lib/token"
 import { Post } from "../../types"
+
+setup(h)
+
+const Root = styled("div")({
+  display: "flex",
+})
+
+const Input = styled("input")({
+  width: "calc(100% - 70px)",
+  fontSize: "1.5em"
+})
+
+const Button = styled("button")({
+  width: "48px",
+  backgroundColor: "transparent",
+  boxShadow: "none",
+  border: "1px solid black",
+  borderRadius: "5px",
+})
 
 const CreatePost: FunctionComponent = () => {
   const [title, setTitle] = useState<string>("")
@@ -25,16 +46,16 @@ const CreatePost: FunctionComponent = () => {
       .catch(e => console.error(e))
   }
   return (
-    <div>
+    <Fragment>
+      <Helmet title="NEW POST | TIL" />
       {token && (
-        <Fragment>
-          <label>タイトル</label>
-          <input value={title} onInput={e => setTitle(e.currentTarget.value)} />
-          <Spacer height={8} />
-          <button onClick={createPost}>投稿</button>
-        </Fragment>
+        <Root>
+          <Input value={title} placeholder={"タイトル"} onInput={e => setTitle(e.currentTarget.value)} />
+          <Spacer width={8} />
+          <Button onClick={createPost}>投稿</Button>
+        </Root>
       )}
-    </div>
+    </Fragment>
   )
 }
 

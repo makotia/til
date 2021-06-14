@@ -1,6 +1,7 @@
 import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import Helmet from "preact-helmet"
 import { useEffect, useState } from "preact/hooks"
 
 import PostCard, { PostCreateCard } from "../../components/PostCard"
@@ -21,6 +22,7 @@ const Index: FunctionComponent = () => {
   }, [])
   return (
     <div>
+      <Helmet title="TOP | TIL" />
       <p>学んだことを書くよ</p>
       <Spacer height={16} />
       {posts.length === 0 && !token && <p>なにもないよ</p>}

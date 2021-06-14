@@ -1,6 +1,7 @@
 import { FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import Helmet from "preact-helmet"
 import { route } from "preact-router"
 import { useState } from "preact/hooks"
 
@@ -24,6 +25,7 @@ const Login: FunctionComponent = () => {
   }
   return (
     <div>
+      <Helmet title="LOGIN | TIL" />
       <h2>ログイン</h2>
       <Spacer height={16} />
       <label>ユーザー名</label>
