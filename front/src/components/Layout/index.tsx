@@ -1,15 +1,17 @@
 import { h, FunctionComponent, ComponentChildren } from "preact"
 
+import { styled, setup } from "goober"
 import { route } from "preact-router"
-import { style } from "typestyle"
 
 import Spacer from "../Spacer"
+
+setup(h)
 
 type Props = {
   children: ComponentChildren
 }
 
-const rootStyle = style({
+const Root = styled("div")({
   maxWidth: "100vw",
   width: "1000px",
   margin: "0 auto",
@@ -17,38 +19,36 @@ const rootStyle = style({
   textAlign: "center",
 })
 
-const mainStyle = style({
+const Main = styled("main")({
   minHeight: "calc(100vh - 40px)",
 })
 
-const footerStyle = style({
+const Footer = styled("footer")({
   textAlign: "center",
   height: "40px",
   display: "flex",
   justifyContent: "center",
-  $nest: {
-    "*": {
-      color: "black",
-      textDecoration: "none",
-      margin: "auto 0",
-    }
-  }
+  "> *": {
+    color: "black",
+    textDecoration: "none",
+    margin: "auto 0",
+  },
 })
 
 const Layout: FunctionComponent<Props> = ({ children }: Props) => {
   return (
-    <div className={rootStyle}>
-      <main className={mainStyle}>
+    <Root>
+      <Main>
         <Spacer height={8} />
         <h1 onClick={() => route("/")}>Today I Learned</h1>
         {children}
-      </main>
-      <footer className={footerStyle}>
+      </Main>
+      <Footer>
         <a target="blank" rel="noreferrer noopener" href="https://github.com/makotia">
           Created by @makotia
         </a>
-      </footer>
-    </div>
+      </Footer>
+    </Root>
   )
 }
 

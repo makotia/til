@@ -1,35 +1,35 @@
 import { h, FunctionComponent } from "preact"
 
 import axios from "axios"
+import { styled, setup } from "goober"
 import { useState } from "preact/hooks"
 import ReactHtmlParser from "react-html-parser"
 import snarkdown from "snarkdown"
-import { style } from "typestyle"
 
 import { BASE_URL } from "../../consts"
 import { formatJA, strToDayjs } from "../../lib/date"
 import { getToken } from "../../lib/token"
 import { Content } from "../../types"
 
-const rootStyle = style({
+setup(h)
+
+const Root = styled("div")({
   padding: "10px",
   borderRadius: "10px",
   border: "1px solid black",
-  $nest: {
-    blockquote: {
-      borderLeft: "3px solid #ccc",
-      paddingLeft: "5px",
-      marginLeft: ".5rem"
-    },
-  }
+  "> blockquote": {
+    borderLeft: "3px solid #ccc",
+    paddingLeft: "5px",
+    marginLeft: ".5rem"
+  },
 })
 
-const dateStyle = style({
+const SubDate = styled("p")({
   color: "gray",
   fontSize: "12px",
 })
 
-const textAreaStyle = style({
+const TextArea = styled("textarea")({
   width: "100%",
   minHeight: "5rem",
   height: "unset",
@@ -39,7 +39,7 @@ const textAreaStyle = style({
   outline: "none",
 })
 
-const submitButtonStyle = style({
+const Button = styled("button")({
   marginLeft: "auto",
   display: "block",
   backgroundColor: "transparent",
@@ -56,10 +56,10 @@ type AddContentProps = {
 
 const ContentCard: FunctionComponent<Content> = ({ content, created_at }: Content) => {
   return (
-    <div className={rootStyle}>
-      <p className={dateStyle}>{formatJA(strToDayjs(created_at))}</p>
+    <Root>
+      <SubDate>{formatJA(strToDayjs(created_at))}</SubDate>
       {ReactHtmlParser(snarkdown(content))}
-    </div>
+    </Root>
   )
 }
 
@@ -82,15 +82,14 @@ export const AddContent: FunctionComponent<AddContentProps> = (props) => {
       .catch(err => console.error(err))
   }
   return (
-    <div className={rootStyle}>
-      <textarea
-        className={textAreaStyle}
+    <Root>
+      <TextArea
         rows={content.split("\n").length}
         value={content}
         onInput={e => setContent(e.currentTarget.value)}
       />
-      <button className={submitButtonStyle} onClick={submit}>投稿</button>
-    </div>
+      <Button onClick={submit}>投稿</Button>
+    </Root>
   )
 }
 

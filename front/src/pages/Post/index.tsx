@@ -1,10 +1,9 @@
 import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import { styled, setup } from "goober"
 import Helmet from "preact-helmet"
 import { useEffect, useState } from "preact/hooks"
-import { style } from "typestyle"
-
 
 import Alert from "../../components/Alert"
 import ContentCard, { AddContent } from "../../components/ContentCard"
@@ -14,11 +13,13 @@ import { formatRelative, strToDayjs } from "../../lib/date"
 import { getToken } from "../../lib/token"
 import { Post } from "../../types"
 
+setup(h)
+
 type Props = {
   id: string;
 }
 
-const postStyle = style({
+const PostContainer = styled("div")({
   textAlign: "left"
 })
 
@@ -30,9 +31,9 @@ const Index: FunctionComponent<Props> = ({ id }: Props) => {
     fetchData(id)
   }, [id])
   return (
-    <div className={postStyle}>
+    <PostContainer>
       {post && (
-        <div>
+        <Fragment>
           <Helmet title={`${post.title} | TIL`} />
           <h2>{post.title}</h2>
           <Spacer height={8} />
@@ -49,9 +50,9 @@ const Index: FunctionComponent<Props> = ({ id }: Props) => {
               {token && <AddContent postId={id} refetchFunc={fetchData} />}
             </Fragment>
           )}
-        </div>
+        </Fragment>
       )}
-    </div>
+    </PostContainer>
   )
 }
 

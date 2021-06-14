@@ -1,6 +1,8 @@
 import { h, FunctionComponent } from "preact"
 
-import { style } from "typestyle"
+import { styled, setup } from "goober"
+
+setup(h)
 
 type Size = 0 | 2 | 4 | 8 | 16 | 32 | 64 | 128
 
@@ -12,37 +14,16 @@ type Props = {
 }
 
 const Spacer: FunctionComponent<Props> = ({ width = 0, height = 0, spOnly, pcOnly }: Props) => {
-  const spOnlyStyle = style({
-    display: "none",
-    $nest: {
-      "@media (max-width: 1000px)": {
-        display: "block",
-      },
-    },
-  })
-
-  const pcOnlyStyle = style({
-    display: "block",
-    $nest: {
-      "@media (max-width: 1000px)": {
-        display: "none",
-      },
-    },
-  })
-
-  const defaultStyle = style({
-    display: "block",
+  const SpacerComponent = styled("span")({
+    display: spOnly ? undefined : "block",
     width: `${width}px`,
     height: `${height}px`,
+    "@media (max-width: 1000px)": {
+      display: pcOnly ? "none" : undefined,
+    },
   })
 
-  const styles = [defaultStyle]
-  spOnly && styles.push(spOnlyStyle)
-  pcOnly && styles.push(pcOnlyStyle)
-
-  return (
-    <span className={styles.join(" ")} />
-  )
+  return <SpacerComponent />
 }
 
 export default Spacer

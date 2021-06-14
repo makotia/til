@@ -1,26 +1,28 @@
 import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import { styled, setup } from "goober"
 import Helmet from "preact-helmet"
 import { route } from "preact-router"
 import { useState } from "preact/hooks"
-import { style } from "typestyle"
 
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
 import { getToken } from "../../lib/token"
 import { Post } from "../../types"
 
-const rootStyle = style({
+setup(h)
+
+const Root = styled("div")({
   display: "flex",
 })
 
-const inputStyle = style({
+const Input = styled("input")({
   width: "calc(100% - 70px)",
   fontSize: "1.5em"
 })
 
-const buttonStyle = style({
+const Button = styled("button")({
   width: "48px",
   backgroundColor: "transparent",
   boxShadow: "none",
@@ -47,11 +49,11 @@ const CreatePost: FunctionComponent = () => {
     <Fragment>
       <Helmet title="NEW POST | TIL" />
       {token && (
-        <div className={rootStyle}>
-          <input className={inputStyle} value={title} placeholder={"タイトル"} onInput={e => setTitle(e.currentTarget.value)} />
+        <Root>
+          <Input value={title} placeholder={"タイトル"} onInput={e => setTitle(e.currentTarget.value)} />
           <Spacer width={8} />
-          <button className={buttonStyle} onClick={createPost}>投稿</button>
-        </div>
+          <Button onClick={createPost}>投稿</Button>
+        </Root>
       )}
     </Fragment>
   )

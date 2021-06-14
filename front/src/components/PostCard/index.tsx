@@ -1,56 +1,52 @@
 import { h, FunctionalComponent } from "preact"
 
+import { styled, setup } from "goober"
 import { route } from "preact-router"
-import { style } from "typestyle"
 
 import { formatJA, strToDayjs } from "../../lib/date"
 import { Post } from "../../types"
 import Spacer from "../Spacer"
 
+setup(h)
+
 type Props = {
   post: Post,
 }
 
-const rootStyle = style({
+const Root = styled("div")({
   width: "100%",
   textAlign: "left",
   border: "1px solid black",
   borderRadius: "10px",
   padding: ".5rem",
-  $nest: {
-    "&:hover": {
-      cursor: "pointer",
-    },
-  }
+  "&:hover": {
+    cursor: "pointer",
+  },
 })
 
-const titleStyle = style({
-  fontSize: "20px",
-})
-
-const dateStyle = style({
+const SubDate = styled("p")({
   color: "gray",
 })
 
-const centerStyle = style({
-  textAlign: "center",
+const Center = styled("h3")({
+  textAlign: "center"
 })
 
 const PostCard: FunctionalComponent<Props> = ({ post }: Props) => {
   return (
-    <div className={rootStyle} onClick={() => route(`/post/${post.id}`)}>
-      <p className={titleStyle}>{post.title}</p>
+    <Root onClick={() => route(`/post/${post.id}`)}>
+      <h3>{post.title}</h3>
       <Spacer height={4} />
-      <p className={dateStyle}>{formatJA(strToDayjs(post.created_at))}</p>
-    </div>
+      <SubDate>{formatJA(strToDayjs(post.created_at))}</SubDate>
+    </Root>
   )
 }
 
 export const PostCreateCard: FunctionalComponent = () => {
   return (
-    <div className={rootStyle} onClick={() => route("/post/new")}>
-      <p className={[titleStyle, centerStyle].join(" ")}>＋新規作成</p>
-    </div>
+    <Root onClick={() => route("/post/new")}>
+      <Center>＋新規作成</Center>
+    </Root>
   )
 }
 
