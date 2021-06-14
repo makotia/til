@@ -1,4 +1,4 @@
-import {FunctionComponent, h} from "preact"
+import { FunctionComponent, h } from "preact"
 
 import { style } from "typestyle"
 
@@ -7,7 +7,7 @@ type Props = {
 }
 
 const rootStyle = style({
-  backgroundColor: "#ff96f6",
+  border: "2px solid #ff96f6",
   borderRadius: "10px",
   padding: "10px",
   width: "100%",
