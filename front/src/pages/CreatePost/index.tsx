@@ -1,6 +1,7 @@
 import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
+import Helmet from "preact-helmet"
 import { route } from "preact-router"
 import { useState } from "preact/hooks"
 import { style } from "typestyle"
@@ -44,6 +45,7 @@ const CreatePost: FunctionComponent = () => {
   }
   return (
     <Fragment>
+      <Helmet title="NEW POST | TIL" />
       {token && (
         <div className={rootStyle}>
           <input className={inputStyle} value={title} placeholder={"タイトル"} onInput={e => setTitle(e.currentTarget.value)} />
