@@ -12,6 +12,7 @@ type Props = {
 }
 
 const Root = styled("div")({
+  fontFamily: "sans-serif",
   maxWidth: "100vw",
   width: "1000px",
   margin: "0 auto",
