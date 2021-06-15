@@ -22,6 +22,9 @@ const Root = styled("div")({
     paddingLeft: "5px",
     marginLeft: ".5rem"
   },
+  "> a": {
+    wordBreak: "break-all",
+  },
 })
 
 const SubDate = styled("p")({

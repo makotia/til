@@ -11,18 +11,18 @@ pub struct Claims {
     exp: i64,
 }
 
-pub fn make_jwt(screen_name: &String) -> String {
+pub fn make_jwt(screen_name: &str) -> String {
     let secret = std::env::var("JWT_SECRET").expect("secret is not set");
-    let mut header = Header::default();
-    header.typ = Some("JWT".to_string());
-    header.alg = Algorithm::HS256;
+    let header = Header {
+        typ: Some("JWT".to_string()),
+        alg: Algorithm::HS256,
+        ..Default::default()
+    };
     let now = Utc::now();
-    let iat = now.timestamp();
-    let exp = (now + Duration::hours(24)).timestamp();
     let my_claims = Claims {
-        screen_name: screen_name.clone(),
-        iat: iat,
-        exp: exp,
+        screen_name: screen_name.to_string(),
+        iat: now.timestamp(),
+        exp: (now + Duration::hours(24)).timestamp(),
     };
 
     encode(
