@@ -39,8 +39,12 @@ async fn main() -> std::io::Result<()> {
                 Method::DELETE,
                 Method::OPTIONS,
             ])
-            .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-            .allowed_header(header::CONTENT_TYPE)
+            .allowed_headers(vec![
+                header::AUTHORIZATION,
+                header::ACCEPT,
+                header::CONTENT_TYPE,
+                header::ACCESS_CONTROL_ALLOW_ORIGIN,
+            ])
             .supports_credentials()
             .max_age(3600);
 
