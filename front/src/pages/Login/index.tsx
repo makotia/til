@@ -3,22 +3,23 @@ import { FunctionComponent, h } from "preact"
 import axios from "axios"
 import Helmet from "preact-helmet"
 import { route } from "preact-router"
-import { useState } from "preact/hooks"
+import { useState, useContext } from "preact/hooks"
 
+import { AuthContext } from "../../AuthContext"
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
-import { setToken } from "../../lib/token"
 
 const Login: FunctionComponent = () => {
   const [screenName, setScreenName] = useState<string>("")
   const [password, setPassword] = useState<string>("")
+  const { setTokenFunc } = useContext(AuthContext)
   const postLogin = () => {
     axios.post<{ token: string; exp: number }>(`${BASE_URL}/login`, {
       screen_name: screenName,
       password,
     })
       .then(res => {
-        setToken(res.data.token, String(res.data.exp))
+        setTokenFunc(res.data.token, String(res.data.exp))
         route("/", true)
       })
       .catch(e => console.error(e))
