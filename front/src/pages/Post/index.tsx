@@ -3,14 +3,14 @@ import { Fragment, FunctionComponent, h } from "preact"
 import axios from "axios"
 import { styled, setup } from "goober"
 import Helmet from "preact-helmet"
-import { useEffect, useState } from "preact/hooks"
+import { useContext, useEffect, useState } from "preact/hooks"
 
+import { AuthContext } from "../../AuthContext"
 import Alert from "../../components/Alert"
 import ContentCard, { AddContent } from "../../components/ContentCard"
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
 import { formatRelative, strToDayjs } from "../../lib/date"
-import { getToken } from "../../lib/token"
 import { Post } from "../../types"
 
 setup(h)
@@ -25,7 +25,7 @@ const PostContainer = styled("div")({
 
 const Index: FunctionComponent<Props> = ({ id }: Props) => {
   const [post, setPost] = useState<Post | undefined>(undefined)
-  const token = getToken()
+  const { token } = useContext(AuthContext)
   const fetchData: (id: string) => void = async (id): Promise<void> => await axios.get<Post>(`${BASE_URL}/posts/${id}`).then(res => setPost(res.data))
   useEffect(() => {
     fetchData(id)

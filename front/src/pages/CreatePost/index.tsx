@@ -4,11 +4,11 @@ import axios from "axios"
 import { styled, setup } from "goober"
 import Helmet from "preact-helmet"
 import { route } from "preact-router"
-import { useState } from "preact/hooks"
+import { useState, useContext } from "preact/hooks"
 
+import { AuthContext } from "../../AuthContext"
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
-import { getToken } from "../../lib/token"
 import { Post } from "../../types"
 
 setup(h)
@@ -32,7 +32,7 @@ const Button = styled("button")({
 
 const CreatePost: FunctionComponent = () => {
   const [title, setTitle] = useState<string>("")
-  const token = getToken()
+  const { token } = useContext(AuthContext)
   const createPost = () => {
     axios.post<Post>(
       `${BASE_URL}/posts`,
