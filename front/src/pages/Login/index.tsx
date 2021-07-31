@@ -13,12 +13,12 @@ const Login: FunctionComponent = () => {
   const [screenName, setScreenName] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const postLogin = () => {
-    axios.post<{ token: string }>(`${BASE_URL}/login`, {
+    axios.post<{ token: string; exp: number }>(`${BASE_URL}/login`, {
       screen_name: screenName,
       password,
     })
       .then(res => {
-        setToken(res.data.token)
+        setToken(res.data.token, String(res.data.exp))
         route("/", true)
       })
       .catch(e => console.error(e))
