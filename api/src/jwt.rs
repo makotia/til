@@ -1,4 +1,4 @@
-use chrono::{Duration, Utc};
+use chrono::{DateTime, Duration, Utc};
 use jsonwebtoken::{
     decode, encode, Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation,
 };
@@ -11,7 +11,7 @@ pub struct Claims {
     exp: i64,
 }
 
-pub fn make_jwt(screen_name: &str) -> String {
+pub fn make_jwt(screen_name: &str) -> (String, DateTime<Utc>) {
     let secret = std::env::var("JWT_SECRET").expect("secret is not set");
     let header = Header {
         typ: Some("JWT".to_string()),
@@ -19,18 +19,21 @@ pub fn make_jwt(screen_name: &str) -> String {
         ..Default::default()
     };
     let now = Utc::now();
+    let exp = now + Duration::hours(24);
     let my_claims = Claims {
         screen_name: screen_name.to_string(),
         iat: now.timestamp(),
-        exp: (now + Duration::hours(24)).timestamp(),
+        exp: exp.timestamp(),
     };
 
-    encode(
+    let token = encode(
         &header,
         &my_claims,
         &EncodingKey::from_secret(secret.as_ref()),
     )
-    .unwrap()
+    .unwrap();
+
+    (token, exp)
 }
 
 pub fn decode_jwt(jwt: &str) -> Result<TokenData<Claims>, jsonwebtoken::errors::Error> {

@@ -2,17 +2,17 @@ import { Fragment, FunctionComponent, h } from "preact"
 
 import axios from "axios"
 import Helmet from "preact-helmet"
-import { useEffect, useState } from "preact/hooks"
+import { useContext, useEffect, useState } from "preact/hooks"
 
+import { AuthContext } from "../../AuthContext"
 import PostCard, { PostCreateCard } from "../../components/PostCard"
 import Spacer from "../../components/Spacer"
 import { BASE_URL } from "../../consts"
-import { getToken } from "../../lib/token"
 import { Post } from "../../types"
 
 const Index: FunctionComponent = () => {
   const [posts, setPosts] = useState<Post[]>([])
-  const token = getToken()
+  const { token } = useContext(AuthContext)
   useEffect(() => {
     const f = async (): Promise<void> =>
       await axios

@@ -2,13 +2,13 @@ import { h, FunctionComponent } from "preact"
 
 import axios from "axios"
 import { styled, setup } from "goober"
-import { useState } from "preact/hooks"
+import { useContext, useState } from "preact/hooks"
 import ReactHtmlParser from "react-html-parser"
 import snarkdown from "snarkdown"
 
+import { AuthContext } from "../../AuthContext"
 import { BASE_URL } from "../../consts"
 import { formatJA, strToDayjs } from "../../lib/date"
-import { getToken } from "../../lib/token"
 import { Content } from "../../types"
 
 setup(h)
@@ -68,7 +68,7 @@ const ContentCard: FunctionComponent<Content> = ({ content, created_at }: Conten
 
 export const AddContent: FunctionComponent<AddContentProps> = (props) => {
   const [content, setContent] = useState<string>("")
-  const token = getToken()
+  const { token } = useContext(AuthContext)
   const submit = () => {
     axios.post<Content>(
       `${BASE_URL}/posts/${props.postId}/contents`,

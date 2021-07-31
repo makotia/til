@@ -141,9 +141,9 @@ pub async fn login_user(
 
     match verify(password, &user.hashed_password) {
         Ok(_) => {
-            let token = make_jwt(&user.screen_name);
+            let (token, exp) = make_jwt(&user.screen_name);
 
-            let return_data = AuthData { token };
+            let return_data = AuthData { token, exp };
 
             Ok(HttpResponse::Ok().json(return_data))
         }
