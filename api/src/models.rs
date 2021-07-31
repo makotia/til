@@ -1,4 +1,5 @@
 use super::schema::*;
+use chrono::{DateTime, Utc};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use serde::{Deserialize, Serialize};
 
@@ -69,4 +70,5 @@ pub struct LoginUser {
 #[derive(Serialize, Debug)]
 pub struct AuthData {
     pub token: String,
+    pub exp: DateTime<Utc>,
 }
